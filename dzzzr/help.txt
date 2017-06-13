@@ -1,0 +1,14 @@
+def login(request):
+    m = Member.objects.get(username=request.POST['username'])
+    if m.password == request.POST['password']:
+        request.session['member_id'] = m.id
+        return HttpResponse("You're logged in.")
+    else:
+        return HttpResponse("Your username and password didn't match.")
+... А это обеспечивает выход пользователя, аналогично login() выше:
+
+def logout(request):
+    try:
+        del request.session['member_id']
+    except KeyError:
+        pass

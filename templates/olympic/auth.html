@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block contents %}
+
+<form method="POST" action="" class="form-horizontal">{% csrf_token %}
+    <div class="form-group">
+        <div class="col-sm-offset-3 col-sm-4">
+            <img src="{% static 'dozor_logo_black.gif' %} ">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="inputEmail3" class="col-sm-4 control-label">Login</label>
+        <div class="col-sm-3">
+            <input type="text" class="form-control" id="username" name="username" placeholder="Login">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="inputPassword3" class="col-sm-4 control-label">Password</label>
+        <div class="col-sm-3">
+            <input type="password" class="form-control" id="password" name="password" placeholder="Password">
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-offset-4 col-sm-3">
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" name="remember"> Remember me
+                </label>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-offset-4 col-sm-3">
+            <button type="submit" class="btn btn-red black">Sign in</button>
+        </div>
+    </div>
+</form>
+
+{% endblock contents %}

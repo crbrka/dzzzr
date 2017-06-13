@@ -1,0 +1,18 @@
+body {
+
+}
+.wrap {
+    position: fixed;
+    height: 100%;
+    width: 100%;
+    background-color: black;
+}
+.container {
+    background-color: black;
+    font-family: Roboto, sans-serif;
+    color: white;
+}
+
+.black {
+    color: black;
+}
