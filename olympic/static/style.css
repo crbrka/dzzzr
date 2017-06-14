@@ -11,3 +11,34 @@
 .bold {
     font-weight: bold;
 }
+
+
+.grey {
+    background-color: grey;
+}
+
+.white {
+    background-color: white;
+}
+
+.flexcontainer {
+    border: 0px solid black;
+    height: 550px;
+    display: flex;
+    align-items: stretch;
+    align-content: stretch;
+    flex-direction: column;
+}
+
+.flexdiv {
+    border: 1px solid black;
+    text-align: center;
+    margin: 2px;
+    vertical-align: middle;
+    font-family: Verdana;
+    flex: 1;
+}
+
+td {
+    padding: 5px;
+    }
