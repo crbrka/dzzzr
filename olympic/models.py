@@ -1,5 +1,6 @@
 from django.db import models
 
+
 # Create your models here.
 
 class GameAdmins(models.Model):
@@ -25,7 +26,9 @@ class Games(models.Model):
     updated = models.DateTimeField(auto_created=False,auto_now=True)
     game_admin = models.ForeignKey(GameAdmins)
     final_code = models.CharField(max_length=30)
-    codes = models.TextField
+    divider = models.IntegerField(default=3)
+    rows = models.IntegerField(default=4)
+    words = models.CharField(max_length=3000)
 
     def __str__(self):
         return "%s" % (self.short_name)
@@ -45,7 +48,7 @@ class Teams(models.Model):
     game = models.ForeignKey(Games)
 
     def __str__(self):
-        return "%s - %s" % (self.game_id, self.name)
+        return "%s" % (self.name)
 
     class Meta:
         verbose_name = 'Команда'
@@ -53,3 +56,18 @@ class Teams(models.Model):
         db_table = 'dzzzr_teams'
 
 
+class Codes(models.Model):
+    code = models.CharField(max_length=200)
+    created = models.DateTimeField(auto_created=True)
+    ip_addr = models.CharField(max_length=16,default='127.0.0.2')
+    client  = models.CharField(max_length=255)
+    game = models.ForeignKey(Games)
+    team = models.ForeignKey(Teams)
+
+    def __str__(self):
+        return "%s" % (self.code)
+
+    class Meta:
+        verbose_name = 'Код'
+        verbose_name_plural = 'Коды'
+        db_table = 'dzzzr_codes'
