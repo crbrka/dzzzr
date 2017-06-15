@@ -1,6 +1,5 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
-from . import urls
 from .forms import *
 from .models import *
 import datetime
@@ -9,12 +8,46 @@ auth_page = 'olympic/auth.html'
 logged_page = 'olympic/main.html'
 
 
+def get_columns_count(codes,divider):  # считаем кол-во колонок
+    codes_count = len(codes)
+    delitel = 1
+    counter = 1
+    while not codes_count < delitel*divider:
+        delitel *= divider
+        counter += 1
+    return counter
+
+
+def get_ranges(codes,divider):  # считаем кол-во диапазонов
+    codes_count = len(codes)
+    delitel = counter = 1
+    ranges = [range(1)]
+    while not codes_count < delitel*divider:
+        delitel *= divider
+        counter += 1
+        ranges.append(range(delitel))
+    return ranges
+
+
+def get_rows_count(codes, divider):
+    codes_count = len(codes)
+    row_count = 1
+    while True:
+        row_count *= divider
+        if row_count > codes_count:
+            break
+    row_count /= divider
+    return int(row_count)
 
 def index(request):
     if request.session.get('is_logged', False):
-        game_info = Games.objects.get(id=request.session.get('game_id',1))
-        answer_table=draw_table(request)
+        game = Games.objects.get(id=request.session.get('game_id', 0))  # берем всю информацию по игре
+        codes = game.words.split(' ')  # из строки в лист
+        col_count = get_columns_count(codes, game.divider)
+        row_count = get_rows_count(codes, game.divider)
+        cycles = get_ranges(codes, game.divider)
         form = CodeEnterForm()
+        last_codes(request,10)
         return render(request, logged_page, locals())
     else:
         if request.session.get('pass_error', False):
@@ -22,16 +55,18 @@ def index(request):
         form = LoginTeamForm(request.POST)
         return render(request, auth_page, locals())
 
-def SendCode(request): # send new code my team
+
+def SendCode(request):  # send new code my team
     form = CodeEnterForm(request.POST)
     if request.method == 'POST' and form.is_valid():
         data = request.POST
         created = datetime.datetime.now()
         ip_addr = request.META['REMOTE_ADDR']
         user_agent = request.META['HTTP_USER_AGENT']
-        code = Codes(code=data.get("code"),created=created,game_id=request.session.get('game_id',1),team_id=request.session.get('team_id',1),ip_addr=ip_addr,client=user_agent)
+        code = Codes(code=data.get("code"), created=created, game_id=request.session.get('game_id', 1), team_id=request.session.get('team_id', 1), ip_addr=ip_addr, client=user_agent)
         code.save()
     return HttpResponseRedirect('/')
+
 
 def login(request):
     form = LoginTeamForm(request.POST)
@@ -51,6 +86,7 @@ def login(request):
             pass
     return HttpResponseRedirect('/')
 
+
 def logout(request):
     try:
         session_keys = list(request.session.keys())
@@ -60,35 +96,11 @@ def logout(request):
         pass
     return HttpResponseRedirect('/')
 
-def draw_table(request):
-    game = Games.objects.get(id=request.session.get('game_id', 0))
-    codes = game.words.split(' ')
-    code_count = tmp = len(codes)
-    col_count = 0  #определяем переменные
-    row_count = 1
-    table = ''
-    while tmp > 1:  #считаем кол-во колонок
-        tmp /= game.divider
-        col_count = col_count + 1
-    while True:
-        row_count *= game.divider
-        if row_count > code_count:
-            break
-    row_count /= game.divider
-    counter = 0
-    for item in range(0, col_count, 1):
-        table +='<td><div class="flexcontainer">'
-        for jtem in range(0, int(row_count), 1):
-            counter += 1
-            table +='<div class=" flexdiv">'+codes[counter-1]+'</div>'
-        row_count /= game.divider
-        table +='</div></td>'
 
-    return table
-
-
-
-
-
-
+def last_codes(request, code_count):
+    try:
+        last = Codes.objects.get(team_id=request.session.get('team_id',0),game_id=request.session.get('game_id',0))
+    except Codes.DoesNotExist:
+            pass
+    print(last[1])
 

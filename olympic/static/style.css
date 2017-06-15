@@ -23,7 +23,7 @@
 
 .flexcontainer {
     border: 0px solid black;
-    height: 550px;
+    height: 750px;
     display: flex;
     align-items: stretch;
     align-content: stretch;
@@ -40,5 +40,5 @@
 }
 
 td {
-    padding: 5px;
+    padding: 2px;
     }

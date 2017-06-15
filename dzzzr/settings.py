@@ -37,7 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'olympic.apps.OlympicConfig',
+    #'olympic.apps.OlympicConfig',
+    'olympic',
 ]
 
 MIDDLEWARE = [

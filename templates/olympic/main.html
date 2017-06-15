@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load olympic_tags %}
 {% block contents %}
 
     <div class="row" >
@@ -18,13 +19,29 @@
             </div>
         </form>
     </div>
+        <table valign="middle"  align="center" width="51%">
+            <tr>
+                {% for item in col_count|times %}
+                    <td>
+                    <div class="flexcontainer">
+                        {% for jtem in cycles|show_element:forloop.revcounter0 %}
+                            <div class="flexdiv"> {{ codes|ins_code:1}} </div>
+                        {% endfor %}
+                    </div>
+                    </td>
+                {% endfor %}
+
+            </tr>
+        </table>
+
     <div class="row"><br>
         <div class="col-md-offset-3 col-md-6 ">
-            <table border="0px" cellpadding="10" cellspacing="10" width="100%" >
+            <table border="0px" width="100%" >
                 <tr>
                     {% autoescape off %}  {{ answer_table }}  {% endautoescape off %}
                 </tr>
             </table>
         </div>
     </div>
+
 {% endblock %}
