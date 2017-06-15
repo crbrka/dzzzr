@@ -61,27 +61,34 @@ def logout(request):
     return HttpResponseRedirect('/')
 
 def draw_table(request):
-    game_info = Games.objects.get(id=request.session.get('game_id', 1))
-    counter = len(game_info.words.split(' ')) # определяем количество кодов
-    col_id = 0 # define col id for use array
-    col_count = 0 #define coloums count var
-    table = '' #HTML Var
-    while counter > 1: #смотрим сколько будет колонок, учитывая известный делитель
-        counter = counter / game_info.divider
-        col_count = col_count+1
+    game = Games.objects.get(id=request.session.get('game_id', 0))
+    codes = game.words.split(' ')
+    code_count = tmp = len(codes)
+    col_count = 0  #определяем переменные
+    row_count = 1
+    table = ''
+    while tmp > 1:  #считаем кол-во колонок
+        tmp /= game.divider
+        col_count = col_count + 1
+    while True:
+        row_count *= game.divider
+        if row_count > code_count:
+            break
+    row_count /= game.divider
+    counter = 0
+    for item in range(0, col_count, 1):
+        table +='<td><div class="flexcontainer">'
+        for jtem in range(0, int(row_count), 1):
+            counter += 1
+            table +='<div class=" flexdiv">'+codes[counter-1]+'</div>'
+        row_count /= game.divider
+        table +='</div></td>'
 
-    for i in range(0, game_info.rows, ):
-        table = table+'<tr>'
-        rowspan = 1
-        for j in range(0, col_count, 1):
-            cell=''
-            if i % rowspan == 0:
-                cell='<td rowspan="'+str(rowspan)+'">'+str(col_id)+'</td>'
-                col_id=col_id+1
-            table = table+cell
-            rowspan=rowspan*game_info.divider
-        table = table+'</tr>'
     return table
+
+
+
+
 
 
 
