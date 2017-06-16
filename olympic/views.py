@@ -2,52 +2,23 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from .forms import *
 from .models import *
+from .functions import *
 import datetime
 
 auth_page = 'olympic/auth.html'
 logged_page = 'olympic/main.html'
 
 
-def get_columns_count(codes,divider):  # считаем кол-во колонок
-    codes_count = len(codes)
-    delitel = 1
-    counter = 1
-    while not codes_count < delitel*divider:
-        delitel *= divider
-        counter += 1
-    return counter
-
-
-def get_ranges(codes,divider):  # считаем кол-во диапазонов
-    codes_count = len(codes)
-    delitel = counter = 1
-    ranges = [range(1)]
-    while not codes_count < delitel*divider:
-        delitel *= divider
-        counter += 1
-        ranges.append(range(delitel))
-    return ranges
-
-
-def get_rows_count(codes, divider):
-    codes_count = len(codes)
-    row_count = 1
-    while True:
-        row_count *= divider
-        if row_count > codes_count:
-            break
-    row_count /= divider
-    return int(row_count)
-
 def index(request):
     if request.session.get('is_logged', False):
         game = Games.objects.get(id=request.session.get('game_id', 0))  # берем всю информацию по игре
         codes = game.words.split(' ')  # из строки в лист
-        col_count = get_columns_count(codes, game.divider)
-        row_count = get_rows_count(codes, game.divider)
-        cycles = get_ranges(codes, game.divider)
+        #print(codes)
+        team_codes = check_codes(request, codes)
+        print(team_codes)
+        col_count = get_columns_count(codes, game.divider); row_count = get_rows_count(codes, game.divider) ; cycles = get_ranges(codes, game.divider)
         form = CodeEnterForm()
-        last_codes(request,10)
+        lastcodes = last_codes(request, 10,codes)
         return render(request, logged_page, locals())
     else:
         if request.session.get('pass_error', False):
@@ -68,7 +39,7 @@ def SendCode(request):  # send new code my team
     return HttpResponseRedirect('/')
 
 
-def login(request):
+def login(request): # вход и присвоение сессии всех значений аккаунта и игры
     form = LoginTeamForm(request.POST)
     if request.method == 'POST' and form.is_valid():
         try:
@@ -87,7 +58,7 @@ def login(request):
     return HttpResponseRedirect('/')
 
 
-def logout(request):
+def logout(request): # Выход из аккаунта
     try:
         session_keys = list(request.session.keys())
         for key in session_keys:
@@ -97,10 +68,36 @@ def logout(request):
     return HttpResponseRedirect('/')
 
 
-def last_codes(request, code_count):
+def last_codes(request, code_count,codes): #Проверяем последние CODE_COUNT шт. кодов на верность и выводим для информации
     try:
-        last = Codes.objects.get(team_id=request.session.get('team_id',0),game_id=request.session.get('game_id',0))
+        last = Codes.objects.filter(team_id=request.session.get('team_id',0),game_id=request.session.get('game_id',0), ).order_by('-id')[:code_count]
     except Codes.DoesNotExist:
             pass
-    print(last[1])
+    last_list = list(last)
+    for item in last_list:
+        if item.code in codes:
+            item.code += ' - ВЕРЕН!'
+    return last_list
 
+
+def check_codes(request,codes):
+    fixed_codes=[]
+    try:
+        codeslist = Codes.objects.filter(team_id=request.session.get('team_id',0),game_id=request.session.get('game_id',0), )
+    except Codes.DoesNotExist:
+            pass
+    entered_codes = list(codeslist)
+    i=0
+    for item in codes:
+        if item in entered_codes:
+            try:
+                fixed_codes[i] = item
+            except IndexError:
+                pass
+        else:
+            try:
+                fixed_codes[i] = '???'
+            except IndexError:
+                pass
+        i += 1
+    return  codes
