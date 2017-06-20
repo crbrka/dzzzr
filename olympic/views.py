@@ -13,9 +13,7 @@ def index(request):
     if request.session.get('is_logged', False):
         game = Games.objects.get(id=request.session.get('game_id', 0))  # берем всю информацию по игре
         codes = game.words.split(' ')  # из строки в лист
-        #print(codes)
-        team_codes = check_codes(request, codes)
-        print(team_codes)
+        check_codes = check_code(request, codes)
         col_count = get_columns_count(codes, game.divider); row_count = get_rows_count(codes, game.divider) ; cycles = get_ranges(codes, game.divider)
         form = CodeEnterForm()
         lastcodes = last_codes(request, 10,codes)
@@ -72,7 +70,7 @@ def last_codes(request, code_count,codes): #Проверяем последни�
     try:
         last = Codes.objects.filter(team_id=request.session.get('team_id',0),game_id=request.session.get('game_id',0), ).order_by('-id')[:code_count]
     except Codes.DoesNotExist:
-            pass
+        pass
     last_list = list(last)
     for item in last_list:
         if item.code in codes:
@@ -80,24 +78,12 @@ def last_codes(request, code_count,codes): #Проверяем последни�
     return last_list
 
 
-def check_codes(request,codes):
-    fixed_codes=[]
+def check_code(request,game_codes):
     try:
-        codeslist = Codes.objects.filter(team_id=request.session.get('team_id',0),game_id=request.session.get('game_id',0), )
+        entered_codes = Codes.objects.filter(team_id=request.session.get('team_id', 0), game_id=request.session.get('game_id', 0), ).values_list('code',flat=True).distinct()
     except Codes.DoesNotExist:
-            pass
-    entered_codes = list(codeslist)
-    i=0
-    for item in codes:
-        if item in entered_codes:
-            try:
-                fixed_codes[i] = item
-            except IndexError:
-                pass
-        else:
-            try:
-                fixed_codes[i] = '???'
-            except IndexError:
-                pass
-        i += 1
-    return  codes
+        pass
+
+    print(list(entered_codes))
+    print(game_codes)
+    return game_codes
