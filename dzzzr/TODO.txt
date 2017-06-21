@@ -1,0 +1,9 @@
+olympic:
+    stopdate alert
+    show main code
+    trim spaces
+    REdesign
+    multi lang
+adminpanel
+    all
+

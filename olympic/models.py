@@ -24,11 +24,14 @@ class Games(models.Model):
     long_name = models.CharField(max_length=255)
     created = models.DateTimeField(auto_created=True,auto_now=False)
     updated = models.DateTimeField(auto_created=False,auto_now=True)
+    stopdate = models.DateTimeField(auto_created=True,auto_now=True)
     game_admin = models.ForeignKey(GameAdmins)
     final_code = models.CharField(max_length=30)
     divider = models.IntegerField(default=3)
-    rows = models.IntegerField(default=4)
-    words = models.CharField(max_length=3000)
+    #rows = models.IntegerField(default=4)
+    unnecessary = models.IntegerField(default=0)
+    words = models.CharField(max_length=5000)
+
 
     def __str__(self):
         return "%s" % (self.short_name)

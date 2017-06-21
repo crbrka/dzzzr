@@ -14,6 +14,8 @@ def index(request):
         game = Games.objects.get(id=request.session.get('game_id', 0))  # берем всю информацию по игре
         codes = game.words.split(' ')  # из строки в лист
         check_codes = check_code(request, codes)
+        print(codes)
+        print(check_codes)
         col_count = get_columns_count(codes, game.divider); row_count = get_rows_count(codes, game.divider) ; cycles = get_ranges(codes, game.divider)
         form = CodeEnterForm()
         lastcodes = last_codes(request, 10,codes)
@@ -71,19 +73,27 @@ def last_codes(request, code_count,codes): #Проверяем последни�
         last = Codes.objects.filter(team_id=request.session.get('team_id',0),game_id=request.session.get('game_id',0), ).order_by('-id')[:code_count]
     except Codes.DoesNotExist:
         pass
-    last_list = list(last)
-    for item in last_list:
-        if item.code in codes:
-            item.code += ' - ВЕРЕН!'
-    return last_list
+    #last_list = list(last)
+    for item in list(last):
+        if item.code not in codes:
+            item.code += ' - НЕВЕРЕН!'
+    return last
 
 
 def check_code(request,game_codes):
+    res = []
     try:
         entered_codes = Codes.objects.filter(team_id=request.session.get('team_id', 0), game_id=request.session.get('game_id', 0), ).values_list('code',flat=True).distinct()
     except Codes.DoesNotExist:
         pass
+    counter=0
+    for item in game_codes:
+        if item in entered_codes:
+            res.append(item)
+            counter
+        else:
+            res.append('???')
+    return res
 
-    print(list(entered_codes))
-    print(game_codes)
-    return game_codes
+
+#def show_final_code(request):
