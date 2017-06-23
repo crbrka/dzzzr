@@ -1,23 +1,8 @@
 from django.db import models
+from adminpanel import *
 
 
 # Create your models here.
-
-class GameAdmins(models.Model):
-    login = models.CharField(max_length=50)
-    password = models.CharField(max_length=20)
-    name = models.CharField(max_length=50)
-    created = models.DateTimeField(auto_created=True,auto_now=False)
-    updated = models.DateTimeField(auto_created=False,auto_now=True)
-
-    def __str__(self):
-        return "%s" % (self.login)
-
-    class Meta:
-        verbose_name = 'Админ '
-        verbose_name_plural = 'Админы '
-        db_table = 'dzzzr_gameadmins'
-
 
 class Games(models.Model):
     short_name = models.CharField(max_length=50)
@@ -25,7 +10,7 @@ class Games(models.Model):
     created = models.DateTimeField(auto_created=True,auto_now=False)
     updated = models.DateTimeField(auto_created=False,auto_now=True)
     stopdate = models.DateTimeField(auto_created=True,auto_now=True)
-    game_admin = models.ForeignKey(GameAdmins)
+    game_admin = models.ForeignKey('adminpanel.GameAdmins')
     final_code = models.CharField(max_length=30)
     divider = models.IntegerField(default=3)
     #rows = models.IntegerField(default=4)

@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     #'olympic.apps.OlympicConfig',
     'olympic',
+    'adminpanel'
 ]
 
 MIDDLEWARE = [

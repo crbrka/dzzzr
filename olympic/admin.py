@@ -17,15 +17,6 @@ class CodesInline(admin.TabularInline):
     extra = 0
     readonly_fields = ["code","created","ip_addr","game","team","client"]
 
-class GameAdminsAdmin(admin.ModelAdmin):
-    list_display = ["id", "login", "name", "created"]
-    search_fields = ["login", "name",]
-    list_filter = ["login", "name"]
-    inlines = [GamesInline]
-
-    class Meta:
-        model = GameAdmins
-
 
 class GamesAdmin(admin.ModelAdmin):
     list_display = ["id", "short_name", "game_admin", "created", "words"]
@@ -47,7 +38,6 @@ class CodesAdmin(admin.ModelAdmin):
     class Meta:
         model = Codes
 
-admin.site.register(GameAdmins, GameAdminsAdmin)
 admin.site.register(Games, GamesAdmin)
 admin.site.register(Teams, TeamsAdmin)
 admin.site.register(Codes, CodesAdmin)

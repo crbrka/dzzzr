@@ -4,11 +4,11 @@
 {% block contents %}
 
     <div class="row" >
-        <div class="col-md-offset-3 col-md-6 alert alert-success bold"  >Привет {{ request.session.captain }}, Команда: {{ request.session.team_name }}   [ <a href="/logout">Выйти</a> ]</div>
+        <div class="col-md-12"  >Привет {{ request.session.captain }}, Команда: {{ request.session.team_name }}   [ <a href="/logout">Выйти</a> ]</div>
     </div>
     {%  if lastcodes %}
     <div class="row" >
-        <div class="col-md-offset-3 col-md-6 alert alert-danger"  > {% for item in lastcodes %}
+        <div class="col-md-12"  > {% for item in lastcodes %}
            {{ forloop.counter }}: {{ item }}<br>
         {% endfor %}
         </div>
@@ -16,7 +16,7 @@
     {% endif %}
     {% if final_code %}
     <div class="row">
-        <div class="col-md-offset-3 col-md-6 alert">
+        <div class="col-md-12">
            Финальный код: {{ final_code }}
         </div>
     {%  endif %}
@@ -24,9 +24,9 @@
     {% if not game_stop_date %}
         <div class="row" >
             <form method="POST" action="/sendcode">{% csrf_token %}
-                <div class="col-md-offset-3 col-md-6 input-group ">
-                      <input type="text" class="form-control" name="{{ form.code.name }}" placeholder="Код сюда.."  required>
-                      <span class="input-group-btn">
+                <div class=" col-md-6 col-md-offset-3  input-group ">
+                      <input type="text" class="form-control" name="{{ form.code.name }}" placeholder="Код сюда.."  size="20" required>
+                      <span class="input-group-btn  input-group ">
                         <button class="btn btn-default" type="submit">Отправить</button>
                       </span>
                 </div>
@@ -36,35 +36,28 @@
 
     {% if game_stop_date %}
         <div class="row" >
-                <div class="col-md-offset-3 col-md-6 input-group ">
+                <div class=" col-md-12">
                     <p style="text-align: center">Игра ЗАКРЫТА {{ game_stop_date }}</p>
                 </div>
         </div>
     {% endif %}
-
-        <table valign="middle"  align="center" width="51%">
-            <tr>
-                {% for item in col_count|times %}
-                    <td>
-                    <div class="flexcontainer">
-                        {% for jtem in cycles|show_element:forloop.revcounter0 %}
-                            <div class="flexdiv"> {{ check_codes|ins_code:1}} </div>
-                        {% endfor %}
-                    </div>
-                    </td>
-                {% endfor %}
-
-            </tr>
-        </table>
-
-    <div class="row"><br>
-        <div class="col-md-offset-3 col-md-6 ">
-            <table border="0px" width="100%" >
-                <tr>
-                    {% autoescape off %}  {{ answer_table }}  {% endautoescape off %}
+      <div class="row" >
+          <div class="col-md-12">
+              <table valign="middle"  align="center" width="90%">
+                  <tr>
+                    {% for item in col_count|times %}
+                        <td>
+                        <div class="flexcontainer">
+                            {% for jtem in cycles|show_element:forloop.revcounter0 %}
+                                <div class="flexdiv"> {{ check_codes|ins_code:1}} </div>
+                            {% endfor %}
+                        </div>
+                        </td>
+                    {% endfor %}
                 </tr>
             </table>
         </div>
-    </div>
+      </div>
+
 
 {% endblock %}

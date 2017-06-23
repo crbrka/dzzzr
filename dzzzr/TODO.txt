@@ -1,7 +1,5 @@
 olympic:
-    trim spaces
-    REdesign
-    multi lang
+
 adminpanel
     all
 

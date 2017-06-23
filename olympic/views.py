@@ -14,6 +14,7 @@ now = timezone.now()
 def index(request):
     if request.session.get('is_logged', False):
         game = Games.objects.get(id=request.session.get('game_id', 0))  # берем всю информацию по игре
+       # codes = " ".join(game.words.split())
         codes = game.words.split(' ')  # из строки в лист
         check_codes = check_code(request, codes) # проверка кода, если есть в базе то показываем, если нет то выводим unknown_pattern
         if check_codes.count(unknown_pattern) <= game.unnecessary: # Считаем сколько осталось неразгаданных слов, если меьше или равно нужного кол-во то выводим код
