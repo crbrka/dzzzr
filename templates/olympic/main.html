@@ -6,22 +6,42 @@
     <div class="row" >
         <div class="col-md-offset-3 col-md-6 alert alert-success bold"  >Привет {{ request.session.captain }}, Команда: {{ request.session.team_name }}   [ <a href="/logout">Выйти</a> ]</div>
     </div>
+    {%  if lastcodes %}
     <div class="row" >
         <div class="col-md-offset-3 col-md-6 alert alert-danger"  > {% for item in lastcodes %}
            {{ forloop.counter }}: {{ item }}<br>
         {% endfor %}
         </div>
     </div>
-    <div class="row" >
-        <form method="POST" action="/sendcode">{% csrf_token %}
-            <div class="col-md-offset-3 col-md-6 input-group ">
-                  <input type="text" class="form-control" name="{{ form.code.name }}" placeholder="Код сюда.."  required>
-                  <span class="input-group-btn">
-                    <button class="btn btn-default" type="submit">Отправить</button>
-                  </span>
-            </div>
-        </form>
+    {% endif %}
+    {% if final_code %}
+    <div class="row">
+        <div class="col-md-offset-3 col-md-6 alert">
+           Финальный код: {{ final_code }}
+        </div>
+    {%  endif %}
     </div>
+    {% if not game_stop_date %}
+        <div class="row" >
+            <form method="POST" action="/sendcode">{% csrf_token %}
+                <div class="col-md-offset-3 col-md-6 input-group ">
+                      <input type="text" class="form-control" name="{{ form.code.name }}" placeholder="Код сюда.."  required>
+                      <span class="input-group-btn">
+                        <button class="btn btn-default" type="submit">Отправить</button>
+                      </span>
+                </div>
+            </form>
+        </div>
+    {% endif %}
+
+    {% if game_stop_date %}
+        <div class="row" >
+                <div class="col-md-offset-3 col-md-6 input-group ">
+                    <p style="text-align: center">Игра ЗАКРЫТА {{ game_stop_date }}</p>
+                </div>
+        </div>
+    {% endif %}
+
         <table valign="middle"  align="center" width="51%">
             <tr>
                 {% for item in col_count|times %}

@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
+from django.utils import timezone
 from .forms import *
 from .models import *
 from .functions import *
@@ -7,16 +8,21 @@ import datetime
 
 auth_page = 'olympic/auth.html'
 logged_page = 'olympic/main.html'
-
+unknown_pattern = '???' # так показываются неразгаданные поля
+now = timezone.now()
 
 def index(request):
     if request.session.get('is_logged', False):
         game = Games.objects.get(id=request.session.get('game_id', 0))  # берем всю информацию по игре
         codes = game.words.split(' ')  # из строки в лист
-        check_codes = check_code(request, codes)
-        print(codes)
-        print(check_codes)
-        col_count = get_columns_count(codes, game.divider); row_count = get_rows_count(codes, game.divider) ; cycles = get_ranges(codes, game.divider)
+        check_codes = check_code(request, codes) # проверка кода, если есть в базе то показываем, если нет то выводим unknown_pattern
+        if check_codes.count(unknown_pattern) <= game.unnecessary: # Считаем сколько осталось неразгаданных слов, если меьше или равно нужного кол-во то выводим код
+            final_code = game.final_code
+        if game.stopdate < now:
+            game_stop_date = game.stopdate
+        col_count = get_columns_count(codes, game.divider)
+        row_count = get_rows_count(codes, game.divider)
+        cycles = get_ranges(codes, game.divider)
         form = CodeEnterForm()
         lastcodes = last_codes(request, 10,codes)
         return render(request, logged_page, locals())
@@ -92,8 +98,6 @@ def check_code(request,game_codes):
             res.append(item)
             counter
         else:
-            res.append('???')
+            res.append(unknown_pattern)
     return res
 
-
-#def show_final_code(request):
