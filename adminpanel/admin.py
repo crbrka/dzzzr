@@ -1,13 +1,14 @@
 from django.contrib import admin
 from .models import *
-from olympic import models
+from olympic.models import Games
 
 # Register your models here.
+
 class GameAdminsAdmin(admin.ModelAdmin):
     list_display = ["id", "login", "name", "created"]
     search_fields = ["login", "name",]
     list_filter = ["login", "name"]
-  #  inlines = ['olympic.GamesInline']
+   # inlines = [GamesInline]
 
     class Meta:
         model = GameAdmins

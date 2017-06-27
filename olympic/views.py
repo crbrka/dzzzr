@@ -6,18 +6,21 @@ from .models import *
 from .functions import *
 import datetime
 
-auth_page = 'olympic/auth.html'
+auth_page = 'auth.html'
 logged_page = 'olympic/main.html'
-unknown_pattern = '???' # так показываются неразгаданные поля
+unknown_pattern = '???'  # так показываются неразгаданные поля
 now = timezone.now()
+
 
 def index(request):
     if request.session.get('is_logged', False):
         game = Games.objects.get(id=request.session.get('game_id', 0))  # берем всю информацию по игре
-       # codes = " ".join(game.words.split())
+        # codes = " ".join(game.words.split())
         codes = game.words.split(' ')  # из строки в лист
-        check_codes = check_code(request, codes) # проверка кода, если есть в базе то показываем, если нет то выводим unknown_pattern
-        if check_codes.count(unknown_pattern) <= game.unnecessary: # Считаем сколько осталось неразгаданных слов, если меьше или равно нужного кол-во то выводим код
+        check_codes = check_code(request,
+                                 codes)  # проверка кода, если есть в базе то показываем, если нет то выводим unknown_pattern
+        if check_codes.count(
+                unknown_pattern) <= game.unnecessary:  # Считаем сколько осталось неразгаданных слов, если меьше или равно нужного кол-во то выводим код
             final_code = game.final_code
         if game.stopdate < now:
             game_stop_date = game.stopdate
@@ -25,7 +28,7 @@ def index(request):
         row_count = get_rows_count(codes, game.divider)
         cycles = get_ranges(codes, game.divider)
         form = CodeEnterForm()
-        lastcodes = last_codes(request, 10,codes)
+        lastcodes = last_codes(request, 10, codes)
         return render(request, logged_page, locals())
     else:
         if request.session.get('pass_error', False):
@@ -41,12 +44,13 @@ def SendCode(request):  # send new code my team
         created = datetime.datetime.now()
         ip_addr = request.META['REMOTE_ADDR']
         user_agent = request.META['HTTP_USER_AGENT']
-        code = Codes(code=data.get("code"), created=created, game_id=request.session.get('game_id', 1), team_id=request.session.get('team_id', 1), ip_addr=ip_addr, client=user_agent)
+        code = Codes(code=data.get("code"), created=created, game_id=request.session.get('game_id', 1),
+                     team_id=request.session.get('team_id', 1), ip_addr=ip_addr, client=user_agent)
         code.save()
     return HttpResponseRedirect('/')
 
 
-def login(request): # вход и присвоение сессии всех значений аккаунта и игры
+def login(request):  # вход и присвоение сессии всех значений аккаунта и игры
     form = LoginTeamForm(request.POST)
     if request.method == 'POST' and form.is_valid():
         try:
@@ -65,7 +69,7 @@ def login(request): # вход и присвоение сессии всех з�
     return HttpResponseRedirect('/')
 
 
-def logout(request): # Выход из аккаунта
+def logout(request):  # Выход из аккаунта
     try:
         session_keys = list(request.session.keys())
         for key in session_keys:
@@ -75,25 +79,28 @@ def logout(request): # Выход из аккаунта
     return HttpResponseRedirect('/')
 
 
-def last_codes(request, code_count,codes): #Проверяем последние CODE_COUNT шт. кодов на верность и выводим для информации
+def last_codes(request, code_count, codes):  # Проверяем последние CODE_COUNT шт. кодов на верность и выводим для информации
     try:
-        last = Codes.objects.filter(team_id=request.session.get('team_id',0),game_id=request.session.get('game_id',0), ).order_by('-id')[:code_count]
+        last = Codes.objects.filter(team_id=request.session.get('team_id', 0),
+                                    game_id=request.session.get('game_id', 0), ).order_by('-id')[:code_count]
     except Codes.DoesNotExist:
         pass
-    #last_list = list(last)
+    # last_list = list(last)
     for item in list(last):
         if item.code not in codes:
             item.code += ' - НЕВЕРЕН!'
     return last
 
 
-def check_code(request,game_codes):
+def check_code(request, game_codes):
     res = []
     try:
-        entered_codes = Codes.objects.filter(team_id=request.session.get('team_id', 0), game_id=request.session.get('game_id', 0), ).values_list('code',flat=True).distinct()
+        entered_codes = Codes.objects.filter(team_id=request.session.get('team_id', 0),
+                                             game_id=request.session.get('game_id', 0), ).values_list('code',
+                                                                                                      flat=True).distinct()
     except Codes.DoesNotExist:
         pass
-    counter=0
+    counter = 0
     for item in game_codes:
         if item in entered_codes:
             res.append(item)
@@ -101,4 +108,3 @@ def check_code(request,game_codes):
         else:
             res.append(unknown_pattern)
     return res
-

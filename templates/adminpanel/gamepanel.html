@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load tz %}
+{% load olympic_tags %}
+{% block contents %}
+    <div class="row bg-success text-success">
+        <div class="col-md-10 "><h3>Welcome back, {{ request.session.admin_name }}, Активная игра: {{ request.session.active_game.1 }}</h3></div>
+        <div class="col-md-2"><a class="white-link" href="logout"><h3>Выйти из панели админа.</h3></a></div>
+    </div>
+    <div class="row  bg-warning">
+        <div class="col-md-10">
+            <form method="GET" action="">{% csrf_token %}
+                Информация по вашим играм:
+                <select name="game_id">
+                    {% for item in request.session.admin_games %}
+                        <option value="{{ item.0 }}">{{ item.1 }}</option>
+                    {% endfor %}
+                </select>
+                <button class="btn btn-info" type="submit">Выбрать игру</button>
+            </form>
+        </div>
+        <div class="col-md-2">
+            <a href="newgame">[ Создать новую игру ]<a/>
+        </div>
+    </div>
+    <div class="row bg-danger">
+        <div  class="col-md-12">
+            Игра начинается {{ active_game.0.2|date }} {{ active_game.0.2|time }}, Стоп Игра {{ active_game.0.1|date }} {{ active_game.0.1|time }}
+        </div>
+    </div>
+    <div class="row bg-faded">
+        <div class="col-md-8">
+            <table class="table">
+                <thead><td>#</td><td>Название команды</td><td>Кодов разгадано</td><td>Попыток</td></thead>
+                <tbody>
+                    <tr>
+                        <td>1</td><td>Bananas</td><td>23/93</td><td>238</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-4">
+            Коды тут
+
+        </div>
+    </div>
+{%  endblock contents %}

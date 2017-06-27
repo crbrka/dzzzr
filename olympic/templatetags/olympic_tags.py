@@ -32,8 +32,10 @@ def ins_code(value,arg):
     except IndexError:
         return 'Ошибка'
 
+def truedate(value):
+    return  str(value)
 
-
+register.filter('truedate',truedate)
 register.filter('ins_code',ins_code)
 register.filter('div',div)
 register.filter('times',times)

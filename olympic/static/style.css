@@ -12,6 +12,12 @@
     font-weight: bold;
 }
 
+.white-link a
+    a:visited
+a:active{
+    color: #ffffff;
+}
+
 
 .grey {
     background-color: grey;

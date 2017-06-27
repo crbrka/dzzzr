@@ -1,5 +1,11 @@
 olympic:
-
+    change delimeter from space to some shit
 adminpanel
-    all
+    archived games
+    jQuery codes
+auth
+    both for users and admins auth
 
+
+
+https://www.w3schools.com/bootstrap/
